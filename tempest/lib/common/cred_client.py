@@ -147,6 +147,17 @@ class V3CredsClient(CredsClient):
             msg = "Requested domain %s could not be found" % domain_name
             raise lib_exc.InvalidCredentials(msg)
 
+    def create_user(self, username, password, project, email):
+        params = {'name': username,
+                  'password': password,
+                  self.project_id_param: project['id'],
+                  'email': email,
+                  'domain_id': self.creds_domain['id'] }
+        user = self.users_client.create_user(**params)
+        if 'user' in user:
+            user = user['user']
+        return user
+
     def create_project(self, name, description):
         project = self.projects_client.create_project(
             name=name, description=description,
